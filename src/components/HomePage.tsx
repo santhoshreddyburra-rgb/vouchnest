@@ -386,6 +386,10 @@ export const HomePage: React.FC<HomePageProps> = ({
   };
 
   const handleOpenAddCoupon = (brandName?: string) => {
+    if (currentUser?.role !== 'admin') {
+      showToast('Access Denied: Only the Administrator (Santhosh) can add coupons.');
+      return;
+    }
     setModalPreselectedBrand(brandName);
     setIsAddCouponOpen(true);
   };

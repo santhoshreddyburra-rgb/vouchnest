@@ -12,7 +12,18 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     try {
       const saved = localStorage.getItem('vouchnest_user');
-      return saved ? JSON.parse(saved) : null;
+      if (!saved) return null;
+      const parsed: User = JSON.parse(saved);
+      // Strictly enforce: Only Santhosh is Administrator; all other accounts are normal users
+      const isSingleAdmin =
+        parsed.email?.toLowerCase() === 'santhoshreddyburra@gmail.com' ||
+        parsed.email?.toLowerCase() === 'admin@vouchnest.com' ||
+        parsed.username?.toLowerCase() === 'santhosh' ||
+        parsed.username?.toLowerCase() === 'santhu';
+      return {
+        ...parsed,
+        role: isSingleAdmin ? 'admin' : 'user',
+      };
     } catch {
       return null;
     }
@@ -126,6 +137,14 @@ export default function App() {
     } else {
       userObj = userOrUsername;
     }
+
+    const isSingleAdmin =
+      userObj.email?.toLowerCase() === 'santhoshreddyburra@gmail.com' ||
+      userObj.email?.toLowerCase() === 'admin@vouchnest.com' ||
+      userObj.username?.toLowerCase() === 'santhosh' ||
+      userObj.username?.toLowerCase() === 'santhu';
+
+    userObj.role = isSingleAdmin ? 'admin' : 'user';
 
     setCurrentUser(userObj);
     localStorage.setItem('vouchnest_user', JSON.stringify(userObj));

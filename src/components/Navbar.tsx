@@ -208,23 +208,25 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </div>
 
-            {/* +Add Coupon - Add custom coupon for any brand */}
-            <div className="relative py-1">
-              <button
-                onClick={() => {
-                  setActiveItem('add-coupon');
-                  onOpenAddCoupon();
-                }}
-                className={`text-base lg:text-lg transition cursor-pointer ${
-                  activeItem === 'add-coupon' ? 'text-white font-bold' : 'text-neutral-300 hover:text-white font-medium'
-                }`}
-              >
-                +Add Coupon
-              </button>
-              {activeItem === 'add-coupon' && (
-                <div className="absolute -bottom-1.5 left-0 right-0 h-0.5 bg-[#D7131D] rounded-full" />
-              )}
-            </div>
+            {/* +Add Coupon - Strictly restricted to single Admin (Santhosh) */}
+            {currentUser?.role === 'admin' && (
+              <div className="relative py-1">
+                <button
+                  onClick={() => {
+                    setActiveItem('add-coupon');
+                    onOpenAddCoupon();
+                  }}
+                  className={`text-base lg:text-lg transition cursor-pointer ${
+                    activeItem === 'add-coupon' ? 'text-white font-bold' : 'text-neutral-300 hover:text-white font-medium'
+                  }`}
+                >
+                  +Add Coupon
+                </button>
+                {activeItem === 'add-coupon' && (
+                  <div className="absolute -bottom-1.5 left-0 right-0 h-0.5 bg-[#D7131D] rounded-full" />
+                )}
+              </div>
+            )}
 
             {/* Admin Dashboard - Strictly visible only for Admin */}
             {currentUser?.role === 'admin' && (

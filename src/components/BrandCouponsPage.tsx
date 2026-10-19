@@ -314,14 +314,16 @@ export const BrandCouponsPage: React.FC<BrandCouponsPageProps> = ({
               </>
             )}
 
-            <button
-              type="button"
-              onClick={() => onOpenAddCoupon(brand.name)}
-              className="inline-flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-bold text-white bg-[#D7131D] hover:bg-[#b00f17] px-3.5 sm:px-4 py-2.5 rounded-xl shadow-md transition-all cursor-pointer active:scale-95"
-            >
-              <Plus size={16} />
-              <span>Add {brand.name} Coupon</span>
-            </button>
+            {currentUserRole === 'admin' && (
+              <button
+                type="button"
+                onClick={() => onOpenAddCoupon(brand.name)}
+                className="inline-flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-bold text-white bg-[#D7131D] hover:bg-[#b00f17] px-3.5 sm:px-4 py-2.5 rounded-xl shadow-md transition-all cursor-pointer active:scale-95"
+              >
+                <Plus size={16} />
+                <span>Add {brand.name} Coupon</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -416,16 +418,20 @@ export const BrandCouponsPage: React.FC<BrandCouponsPageProps> = ({
             <Tag size={40} className="mx-auto text-neutral-300 mb-3" />
             <h3 className="text-lg font-bold text-neutral-800">No coupons in this view</h3>
             <p className="text-neutral-500 text-sm mt-1 mb-5">
-              Be the first to share an active coupon for {brand.name}!
+              {currentUserRole === 'admin'
+                ? `Add an exclusive discount coupon for ${brand.name} to publish to the platform.`
+                : `New discount vouchers for ${brand.name} will be available here soon.`}
             </p>
-            <button
-              type="button"
-              onClick={() => onOpenAddCoupon(brand.name)}
-              className="inline-flex items-center gap-2 bg-[#D7131D] text-white font-bold text-sm px-5 py-3 rounded-xl hover:bg-[#b00f17] shadow-md transition-all cursor-pointer active:scale-95"
-            >
-              <Plus size={18} />
-              <span>Add First Coupon for {brand.name}</span>
-            </button>
+            {currentUserRole === 'admin' && (
+              <button
+                type="button"
+                onClick={() => onOpenAddCoupon(brand.name)}
+                className="inline-flex items-center gap-2 bg-[#D7131D] text-white font-bold text-sm px-5 py-3 rounded-xl hover:bg-[#b00f17] shadow-md transition-all cursor-pointer active:scale-95"
+              >
+                <Plus size={18} />
+                <span>Add First Coupon for {brand.name}</span>
+              </button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
