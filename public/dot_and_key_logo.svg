@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 200" width="100%" height="100%">
+  <g fill="#0A0A0A">
+    <!-- DOT -->
+    <text x="36" y="112" font-family="'Cinzel', 'Playfair Display', 'Bodoni MT', Georgia, serif" font-size="68" font-weight="900" letter-spacing="4">DOT</text>
+    
+    <!-- Iconic Ornate Ampersand & matching Dot & Key style -->
+    <path d="M 235 62 C 235 48 246 38 260 38 C 273 38 283 48 281 61 C 278 74 263 87 249 98 C 234 111 224 124 224 140 C 224 158 239 168 259 168 C 283 168 304 151 310 131 C 311 128 315 129 314 133 C 306 157 282 175 256 175 C 230 175 212 159 212 137 C 212 118 224 102 239 89 C 250 80 264 69 267 58 C 269 50 263 44 256 44 C 248 44 243 51 243 60 C 243 68 235 68 235 62 Z M 276 135 C 285 122 289 114 291 110 C 293 107 297 109 296 113 C 293 121 285 133 278 141 Z" />
+    
+    <!-- KEY -->
+    <text x="325" y="112" font-family="'Cinzel', 'Playfair Display', 'Bodoni MT', Georgia, serif" font-size="68" font-weight="900" letter-spacing="4">KEY</text>
+    
+    <!-- SKINCARE Subtitle -->
+    <text x="270" y="165" text-anchor="middle" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" letter-spacing="12">SKINCARE</text>
+  </g>
+</svg>

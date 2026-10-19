@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --font-brush: 'Permanent Marker', cursive;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+/* Custom scrollbar and smooth transitions */
+html {
+  scroll-behavior: smooth;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+.brush-font {
+  font-family: 'Permanent Marker', 'Sedgwick Ave Display', cursive;
+  letter-spacing: 0.05em;
+}
+
+.display-serif {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+

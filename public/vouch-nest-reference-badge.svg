@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 96" fill="none" width="100%" height="100%">
+  <!-- 1. Left: Profile Box with Red Border & User Silhouette from reference photo -->
+  <g id="profileAvatarBox">
+    <rect
+      x="6"
+      y="6"
+      width="84"
+      height="84"
+      rx="14"
+      fill="#FFFFFF"
+      stroke="#D7131D"
+      stroke-width="5.5"
+    />
+    <!-- Dark Gray User Silhouette -->
+    <circle cx="48" cy="38" r="16" fill="#4B4B4B" />
+    <path
+      d="M 22 76 C 22 56, 74 56, 74 76 Z"
+      fill="#4B4B4B"
+    />
+  </g>
+
+  <!-- 2. Stylized V-Nest Brand Mark matching reference photo -->
+  <g id="vNestBrandMark">
+    <!-- Left Arm of the V (Curved Black Wing with horizontal top spur) -->
+    <path
+      d="M 104 28 C 108 28, 117 28, 125 31 C 130 37, 138 50, 150 70 C 145 73, 139 73, 133 66 L 118 43 C 113 36, 108 33, 104 31 Z"
+      fill="#000000"
+    />
+    <path
+      d="M 104 28 H 125 C 130 36, 138 50, 150 70"
+      stroke="#000000"
+      stroke-width="7"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+
+    <!-- Right Arm of the V (Angled Red Coupon Ticket with Notch) -->
+    <path
+      d="M 142 67 L 165 24 C 166 22, 169 21, 172 23 L 187 33 C 189 35, 189 38, 187 40 L 181 45 L 188 50 C 190 52, 189 55, 187 57 L 164 74"
+      stroke="#D7131D"
+      stroke-width="6.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="none"
+    />
+
+    <!-- Interwoven Nest Cradle (Black curved twigs under the V) -->
+    <path
+      d="M 106 50 C 118 75, 168 75, 184 50"
+      stroke="#000000"
+      stroke-width="4"
+      stroke-linecap="round"
+      fill="none"
+    />
+    <path
+      d="M 109 60 C 122 83, 162 83, 178 60"
+      stroke="#000000"
+      stroke-width="3.6"
+      stroke-linecap="round"
+      fill="none"
+    />
+    <path
+      d="M 115 69 C 126 88, 154 88, 168 69"
+      stroke="#000000"
+      stroke-width="3"
+      stroke-linecap="round"
+      fill="none"
+    />
+    <path
+      d="M 112 55 L 134 71"
+      stroke="#000000"
+      stroke-width="2.4"
+      stroke-linecap="round"
+    />
+    <path
+      d="M 152 71 L 174 57"
+      stroke="#000000"
+      stroke-width="2.4"
+      stroke-linecap="round"
+    />
+    <path
+      d="M 122 77 L 160 77"
+      stroke="#000000"
+      stroke-width="2.6"
+      stroke-linecap="round"
+    />
+  </g>
+
+  <!-- 3. Typography: "ouchNest" continuous text -->
+  <text
+    x="196"
+    y="66"
+    font-family="'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+    font-weight="900"
+    font-size="50"
+    letter-spacing="-1.5"
+  >
+    <tspan fill="#000000">ouch</tspan>
+    <tspan fill="#D7131D">Nest</tspan>
+  </text>
+</svg>

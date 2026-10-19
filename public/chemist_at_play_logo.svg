@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 280" width="100%" height="100%">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Pacifico&amp;family=Playball&amp;display=swap');
+      .chemist-title {
+        font-family: 'Pacifico', 'Playball', 'Brush Script MT', cursive, sans-serif;
+        font-size: 94px;
+        fill: #0F0F0F;
+        letter-spacing: -1px;
+      }
+      .play-title {
+        font-family: 'Pacifico', 'Playball', 'Brush Script MT', cursive, sans-serif;
+        font-size: 90px;
+        fill: #0F0F0F;
+        letter-spacing: -1px;
+      }
+    </style>
+  </defs>
+  <g transform="rotate(-5 250 140)">
+    <!-- Chemist -->
+    <text x="50" y="115" class="chemist-title" font-weight="bold">Chemist</text>
+    
+    <!-- at Play -->
+    <text x="125" y="210" class="play-title" font-weight="bold">at Play</text>
+    
+    <!-- Elegant script tail underline extension from 'y' -->
+    <path d="M 345 212 C 375 240, 420 248, 455 228 C 475 215, 485 200, 485 188" fill="none" stroke="#0F0F0F" stroke-width="7" stroke-linecap="round" />
+  </g>
+</svg>

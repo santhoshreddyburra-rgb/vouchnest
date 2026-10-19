@@ -1,0 +1,116 @@
+# Let's write the complete unified SVG matching file_00000000ca88820baddb521064c9c17d.png
+svg_content = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 200" fill="none" width="100%" height="100%">
+  <!-- Definitions for clean styling -->
+  <defs>
+    <style>
+      .white-stroke { stroke: #FFFFFF; stroke-linecap: round; stroke-linejoin: round; }
+      .red-fill { fill: #ED1C24; }
+      .white-fill { fill: #FFFFFF; }
+    </style>
+  </defs>
+
+  <!-- MARK: V-Nest (x: 20 to 200, y: 15 to 185) -->
+  <g id="v-mark">
+    <!-- 1. Left Arm: Solid White Slanted Bar with Horizontal Top -->
+    <!-- Top is flat horizontal at y=58, left edge slants down-right at ~60 deg to y=136 -->
+    <path
+      d="M 38 60 H 76 L 122 136 H 84 Z"
+      fill="#FFFFFF"
+    />
+
+    <!-- 2. Right Arm: Tilted Voucher / Ticket Booklet -->
+    <!-- Back Ticket Layer peeking behind on top right -->
+    <path
+      d="M 184 56 L 202 70 C 206 73, 207 78, 204 83 L 178 132"
+      stroke="#FFFFFF"
+      stroke-width="7"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="none"
+    />
+
+    <!-- Front Ticket Body (Tilted rounded card) -->
+    <!-- Rotated ~32 degrees from vertical -->
+    <g transform="translate(108, 32) rotate(32)">
+      <rect
+        x="0"
+        y="0"
+        width="46"
+        height="96"
+        rx="8"
+        stroke="#FFFFFF"
+        stroke-width="7"
+        fill="#000000"
+      />
+      <!-- Stub perforation / tear line across upper ticket -->
+      <line
+        x1="0"
+        y1="24"
+        x2="46"
+        y2="24"
+        stroke="#FFFFFF"
+        stroke-width="6.5"
+        stroke-linecap="round"
+      />
+    </g>
+
+    <!-- 3. Interwoven Bird's Nest Cradle -->
+    <!-- Main outer sweeping cradle -->
+    <path
+      d="M 36 98 C 30 152, 108 184, 208 102"
+      stroke="#FFFFFF"
+      stroke-width="7.5"
+      stroke-linecap="round"
+      fill="none"
+    />
+    <!-- Second inner curved twig -->
+    <path
+      d="M 40 114 C 48 158, 156 172, 204 120"
+      stroke="#FFFFFF"
+      stroke-width="6.5"
+      stroke-linecap="round"
+      fill="none"
+    />
+    <!-- Third inner curved twig -->
+    <path
+      d="M 48 132 C 68 170, 152 176, 192 140"
+      stroke="#FFFFFF"
+      stroke-width="5.5"
+      stroke-linecap="round"
+      fill="none"
+    />
+    <!-- Lower base contour twig -->
+    <path
+      d="M 60 150 C 86 178, 142 182, 174 156"
+      stroke="#FFFFFF"
+      stroke-width="5"
+      stroke-linecap="round"
+      fill="none"
+    />
+
+    <!-- Crossing branch accents for authentic woven texture -->
+    <path d="M 52 134 L 112 168" stroke="#FFFFFF" stroke-width="4.8" stroke-linecap="round" />
+    <path d="M 64 154 L 132 174" stroke="#FFFFFF" stroke-width="4.8" stroke-linecap="round" />
+    <path d="M 100 170 L 174 138" stroke="#FFFFFF" stroke-width="4.8" stroke-linecap="round" />
+    <path d="M 124 172 L 190 130" stroke="#FFFFFF" stroke-width="4.8" stroke-linecap="round" />
+    <path d="M 80 178 L 156 178" stroke="#FFFFFF" stroke-width="4.8" stroke-linecap="round" />
+  </g>
+
+  <!-- WORDMARK: "ouchNest" -->
+  <!-- "ouch" in Solid White, "Nest" in Vivid Red (#ED1C24) -->
+  <text
+    x="212"
+    y="142"
+    font-family="system-ui, -apple-system, 'Plus Jakarta Sans', 'Montserrat', 'Inter', sans-serif"
+    font-size="118"
+    font-weight="900"
+    letter-spacing="-3"
+  >
+    <tspan fill="#FFFFFF">ouch</tspan>
+    <tspan fill="#ED1C24" font-weight="900">Nest</tspan>
+  </text>
+</svg>"""
+
+with open('test_logo.svg', 'w') as f:
+    f.write(svg_content)
+print("SVG written successfully, size:", len(svg_content))

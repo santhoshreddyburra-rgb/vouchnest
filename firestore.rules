@@ -1,0 +1,93 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'santhoshreddyburra@gmail.com' ||
+        request.auth.token.email == 'admin@vouchnest.com'
+      );
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // TEST CONNECTION
+    match /test/{testId} {
+      allow read: if true;
+    }
+
+    // PUBLIC COUPONS CATALOG
+    // Public read so shoppers can browse available discounts; writes restricted to Administrators
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // BRANDS CATALOG
+    // Public read for brand listings; writes restricted to Administrators
+    match /brands/{brandId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // USER PROFILES (Strict PII Isolation & Self-Assignment Prevention)
+    // Users can only read their own profile; RBAC role field cannot be self-elevated
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update: if (
+        isOwner(userId) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'id'])
+      ) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // CLAIMS / REDEEMED VOUCHERS
+    // Users can only view their own redeemed vouchers; Admins cannot redeem
+    match /claims/{claimId} {
+      allow read: if (
+        isSignedIn() && (
+          resource.data.userId == request.auth.uid ||
+          resource.data.userEmail == request.auth.token.email
+        )
+      ) || isAdmin();
+      allow create: if isSignedIn() && !isAdmin();
+      allow update: if (
+        isSignedIn() && resource.data.userId == request.auth.uid
+      ) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // SAVED COUPONS / WISHLIST
+    match /saved_coupons/{savedId} {
+      allow read: if (
+        isSignedIn() && (
+          resource.data.userId == request.auth.uid ||
+          resource.data.userEmail == request.auth.token.email
+        )
+      ) || isAdmin();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if (
+        isSignedIn() && resource.data.userId == request.auth.uid
+      ) || isAdmin();
+    }
+
+    // METADATA
+    match /metadata/{metaId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}
+

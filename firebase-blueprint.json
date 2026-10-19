@@ -1,0 +1,125 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User account profile with role authorization",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "username": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "fullName": { "type": "string" },
+        "phone": { "type": "string" },
+        "age": { "type": "number" },
+        "avatar": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "user"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "username", "email", "role"]
+    },
+    "Coupon": {
+      "title": "Coupon",
+      "description": "Discount voucher and coupon deals managed by administrators",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "brand": { "type": "string" },
+        "discount": { "type": "string" },
+        "discountType": { "type": "string", "enum": ["flat", "percent"] },
+        "code": { "type": "string" },
+        "description": { "type": "string" },
+        "expiryDate": { "type": "string" },
+        "category": { "type": "string" },
+        "couponAmount": { "type": "string" },
+        "sellingPrice": { "type": "string" },
+        "minPurchaseAmount": { "type": "string" },
+        "inventory": { "type": "number" },
+        "totalClaims": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "expired", "depleted"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "title", "brand", "discount", "code", "expiryDate"]
+    },
+    "Claim": {
+      "title": "Claim",
+      "description": "Coupon unlock and claim transaction record by a user",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "couponId": { "type": "string" },
+        "couponTitle": { "type": "string" },
+        "brand": { "type": "string" },
+        "discount": { "type": "string" },
+        "code": { "type": "string" },
+        "userId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "userName": { "type": "string" },
+        "claimedAt": { "type": "string" },
+        "sellingPrice": { "type": "string" },
+        "paymentMethod": { "type": "string" },
+        "transactionId": { "type": "string" },
+        "status": { "type": "string", "enum": ["claimed", "pending", "failed"] }
+      },
+      "required": ["id", "couponId", "code", "userId"]
+    },
+    "Brand": {
+      "title": "Brand",
+      "description": "Partner brand listing and category details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "logo": { "type": "string" },
+        "discountRange": { "type": "string" },
+        "couponCount": { "type": "number" },
+        "isPopular": { "type": "boolean" }
+      },
+      "required": ["id", "name", "category"]
+    },
+    "SavedCoupon": {
+      "title": "SavedCoupon",
+      "description": "User bookmarked and saved coupons for future redemption",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "couponId": { "type": "string" },
+        "brand": { "type": "string" },
+        "title": { "type": "string" },
+        "discount": { "type": "string" },
+        "sellingPrice": { "type": "string" },
+        "couponAmount": { "type": "string" },
+        "code": { "type": "string" },
+        "expiryDate": { "type": "string" },
+        "category": { "type": "string" },
+        "savedAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "couponId", "brand"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles with role and access details"
+    },
+    "/coupons/{couponId}": {
+      "schema": "Coupon",
+      "description": "Available coupons and vouchers"
+    },
+    "/claims/{claimId}": {
+      "schema": "Claim",
+      "description": "User redemption and coupon claim records"
+    },
+    "/brands/{brandId}": {
+      "schema": "Brand",
+      "description": "Featured partner brands"
+    },
+    "/saved_coupons/{savedId}": {
+      "schema": "SavedCoupon",
+      "description": "User bookmarked and saved coupons"
+    }
+  }
+}

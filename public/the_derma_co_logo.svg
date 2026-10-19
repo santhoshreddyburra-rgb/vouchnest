@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 180" width="100%" height="100%">
+  <!-- "THE" -->
+  <text x="82" y="58" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="28" font-weight="900" fill="#181E28" letter-spacing="3">THE</text>
+  
+  <!-- "derma" -->
+  <text x="32" y="132" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="82" font-weight="900" fill="#181E28" letter-spacing="-2">derma</text>
+  
+  <!-- Turquoise Cross Symbol with "co" -->
+  <g transform="translate(340, 42)">
+    <!-- Horizontal arm -->
+    <rect x="0" y="24" width="112" height="56" rx="28" fill="#13B4B2" />
+    <!-- Vertical arm -->
+    <rect x="28" y="-4" width="56" height="112" rx="28" fill="#13B4B2" />
+    
+    <!-- Dots in lobes -->
+    <circle cx="56" cy="14" r="6.5" fill="#7EE7E5" />
+    <circle cx="56" cy="90" r="6.5" fill="#7EE7E5" />
+    <circle cx="16" cy="52" r="6.5" fill="#7EE7E5" />
+    <circle cx="96" cy="52" r="6.5" fill="#7EE7E5" />
+
+    <!-- "co" text inside center of cross -->
+    <text x="56" y="65" text-anchor="middle" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="44" font-weight="900" fill="#FFFFFF" letter-spacing="-1.5">co</text>
+  </g>
+</svg>

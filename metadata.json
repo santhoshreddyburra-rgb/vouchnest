@@ -1,0 +1,8 @@
+{
+  "name": "Remix Remix Remix VouchNest",
+  "description": "Mobile-first coupon and voucher savings platform with custom branded Login, Register, and Home pages.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
