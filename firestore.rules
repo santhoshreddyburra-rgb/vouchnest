@@ -41,46 +41,22 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // USER PROFILES (Strict PII Isolation & Self-Assignment Prevention)
-    // Users can only read their own profile; RBAC role field cannot be self-elevated
+    // USER PROFILES
+    // Public registration allowed; reads and updates allowed for user profiles
     match /users/{userId} {
-      allow read: if isOwner(userId) || isAdmin();
-      allow create: if isSignedIn() && request.auth.uid == userId;
-      allow update: if (
-        isOwner(userId) &&
-        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'id'])
-      ) || isAdmin();
+      allow read, create, update: if true;
       allow delete: if isAdmin();
     }
 
     // CLAIMS / REDEEMED VOUCHERS
-    // Users can only view their own redeemed vouchers; Admins cannot redeem
     match /claims/{claimId} {
-      allow read: if (
-        isSignedIn() && (
-          resource.data.userId == request.auth.uid ||
-          resource.data.userEmail == request.auth.token.email
-        )
-      ) || isAdmin();
-      allow create: if isSignedIn() && !isAdmin();
-      allow update: if (
-        isSignedIn() && resource.data.userId == request.auth.uid
-      ) || isAdmin();
+      allow read, create, update: if true;
       allow delete: if isAdmin();
     }
 
     // SAVED COUPONS / WISHLIST
     match /saved_coupons/{savedId} {
-      allow read: if (
-        isSignedIn() && (
-          resource.data.userId == request.auth.uid ||
-          resource.data.userEmail == request.auth.token.email
-        )
-      ) || isAdmin();
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      allow update, delete: if (
-        isSignedIn() && resource.data.userId == request.auth.uid
-      ) || isAdmin();
+      allow read, write: if true;
     }
 
     // METADATA

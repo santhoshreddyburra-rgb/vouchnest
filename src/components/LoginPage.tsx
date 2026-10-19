@@ -61,6 +61,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       // Network fallback
     }
 
+    const savedUserStr = localStorage.getItem('vouchnest_user');
+    let localSavedUser: User | null = null;
+    if (savedUserStr) {
+      try {
+        localSavedUser = JSON.parse(savedUserStr);
+      } catch {}
+    }
+
     const isMasterAdmin =
       username.trim().toLowerCase() === 'admin' ||
       username.trim().toLowerCase() === 'administrator' ||
@@ -68,14 +76,30 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       username.trim().toLowerCase() === 'santhu' ||
       username.trim().toLowerCase() === 'santhoshreddyburra@gmail.com' ||
       username.trim().toLowerCase() === 'admin@vouchnest.com';
-    const role: UserRole = isMasterAdmin ? 'admin' : 'user';
+    const role: UserRole = isMasterAdmin ? 'admin' : (localSavedUser?.role || 'user');
+
+    const cleanInput = username.trim().toLowerCase();
+    const isMatchingLocal =
+      localSavedUser &&
+      (localSavedUser.email.toLowerCase() === cleanInput ||
+        localSavedUser.username.toLowerCase() === cleanInput);
 
     setTimeout(() => {
       setLoading(false);
+      if (isMatchingLocal && localSavedUser) {
+        onLoginSuccess(localSavedUser);
+        return;
+      }
       onLoginSuccess({
         username: username.trim(),
-        email: username.trim().toLowerCase() === 'santhosh' || username.trim().toLowerCase() === 'santhu' ? 'santhoshreddyburra@gmail.com' : `${username.trim().toLowerCase().replace(/\s+/g, '')}@vouchnest.com`,
-        fullName: username.trim().toLowerCase() === 'santhosh' || username.trim().toLowerCase() === 'santhu' ? 'Santhosh' : username.trim(),
+        email:
+          username.trim().toLowerCase() === 'santhosh' || username.trim().toLowerCase() === 'santhu'
+            ? 'santhoshreddyburra@gmail.com'
+            : `${username.trim().toLowerCase().replace(/\s+/g, '')}@vouchnest.com`,
+        fullName:
+          username.trim().toLowerCase() === 'santhosh' || username.trim().toLowerCase() === 'santhu'
+            ? 'Santhosh'
+            : username.trim(),
         age: username.trim().toLowerCase() === 'santhosh' ? 20 : undefined,
         phone: username.trim().toLowerCase() === 'santhosh' ? '7569806640' : undefined,
         role,
