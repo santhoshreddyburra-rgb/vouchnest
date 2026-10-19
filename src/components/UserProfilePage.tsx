@@ -680,17 +680,15 @@ export function UserProfilePage({
               </div>
             </div>
 
-            <div className="p-5 rounded-xl bg-[#D7131D]/10 border border-[#D7131D]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h4 className="text-sm font-bold text-white">Need Admin Actions?</h4>
-                <p className="text-xs text-neutral-400 mt-0.5">
-                  {profileData?.role === 'admin'
-                    ? 'You have full access to create, edit, and delete coupons across all brands.'
-                    : 'Your account is currently standard user access. Log in as Santhosh to manage coupons.'}
-                </p>
-              </div>
+            {profileData?.role === 'admin' && (
+              <div className="p-5 rounded-xl bg-[#D7131D]/10 border border-[#D7131D]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h4 className="text-sm font-bold text-white">Administrator Actions</h4>
+                  <p className="text-xs text-neutral-400 mt-0.5">
+                    You have verified full access to create, edit, and delete coupons across all brands.
+                  </p>
+                </div>
 
-              {profileData?.role === 'admin' && (
                 <button
                   onClick={() => {
                     onOpenAddCoupon();
@@ -700,8 +698,8 @@ export function UserProfilePage({
                   <Tag size={14} />
                   <span>+Add New Coupon</span>
                 </button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         )}
       </main>

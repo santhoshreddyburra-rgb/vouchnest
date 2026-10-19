@@ -1442,7 +1442,7 @@ async function startServer() {
   });
 
   // POST /api/admin/clear-all-coupons: Reset all coupons and claims to zero
-  app.post(['/api/admin/clear-all-coupons', '/api/database/clear-coupons'], async (req: Request, res: Response) => {
+  app.post(['/api/admin/clear-all-coupons', '/api/database/clear-coupons'], requireRole('admin'), async (req: Request, res: Response) => {
     try {
       coupons.length = 0;
       claims.length = 0;
@@ -1470,8 +1470,8 @@ async function startServer() {
     }
   });
 
-  // POST /admin/coupons, /api/admin/coupons, /api/coupons, /coupons: Add a new coupon
-  app.post(['/api/admin/coupons', '/admin/coupons', '/api/coupons', '/coupons'], async (req: Request, res: Response) => {
+  // POST /admin/coupons, /api/admin/coupons, /api/coupons, /coupons: Add a new coupon (Strictly Admin only)
+  app.post(['/api/admin/coupons', '/admin/coupons', '/api/coupons', '/coupons'], requireRole('admin'), async (req: Request, res: Response) => {
     const {
       brand,
       code,
@@ -1610,8 +1610,8 @@ async function startServer() {
     });
   });
 
-  // DELETE /admin/coupons/:id, /api/admin/coupons/:id, /api/coupons/:id, /coupons/:id: Delete/remove coupon
-  app.delete(['/api/admin/coupons/:id', '/admin/coupons/:id', '/api/coupons/:id', '/coupons/:id'], async (req: Request, res: Response) => {
+  // DELETE /admin/coupons/:id, /api/admin/coupons/:id, /api/coupons/:id, /coupons/:id: Delete/remove coupon (Strictly Admin only)
+  app.delete(['/api/admin/coupons/:id', '/admin/coupons/:id', '/api/coupons/:id', '/coupons/:id'], requireRole('admin'), async (req: Request, res: Response) => {
     const { id } = req.params;
     const index = coupons.findIndex((c) => c.id === id);
     if (index === -1) {
