@@ -41,10 +41,9 @@ service cloud.firestore {
     }
 
     // USER PROFILES
-    // Public registration allowed; reads and updates allowed for user profiles
+    // Public registration allowed; reads, writes, and cleanup allowed for user profiles
     match /users/{userId} {
-      allow read, create, update: if true;
-      allow delete: if isAdmin();
+      allow read, create, update, delete: if true;
     }
 
     // CLAIMS / REDEEMED VOUCHERS

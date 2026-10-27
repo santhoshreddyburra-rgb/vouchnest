@@ -525,7 +525,11 @@ async function syncFirestoreData() {
     if (!usersSnap.empty) {
       usersSnap.forEach((d) => {
         const u = d.data() as StoredUser;
-        const index = users.findIndex((x) => x.id === u.id || x.email.toLowerCase() === u.email.toLowerCase());
+        if (!u || !u.id) return;
+        const uEmail = (u.email || '').trim().toLowerCase();
+        const index = users.findIndex(
+          (x) => x.id === u.id || (Boolean(uEmail) && Boolean(x.email) && x.email.toLowerCase() === uEmail)
+        );
         if (index >= 0) {
           users[index] = { ...users[index], ...u };
         } else {
@@ -2177,10 +2181,10 @@ async function startServer() {
   app.get('/api/user/profile', requireAuth, (req: Request, res: Response) => {
     const user = req.user!;
     const userClaims = claims.filter(
-      (c) => c.userId === user.id || c.userEmail.toLowerCase() === user.email.toLowerCase()
+      (c) => c.userId === user.id || (Boolean(c.userEmail && user.email) && c.userEmail.toLowerCase() === user.email.toLowerCase())
     );
     const userSaved = savedCoupons.filter(
-      (s) => s.userId === user.id || s.userEmail.toLowerCase() === user.email.toLowerCase()
+      (s) => s.userId === user.id || (Boolean(s.userEmail && user.email) && s.userEmail.toLowerCase() === user.email.toLowerCase())
     );
 
     // Calculate total money saved across all claims
@@ -2217,7 +2221,7 @@ async function startServer() {
   app.put('/api/user/profile', requireAuth, async (req: Request, res: Response) => {
     const currentUserId = req.user!.id;
     const targetUserIndex = users.findIndex(
-      (u) => u.id === currentUserId || u.email.toLowerCase() === req.user!.email.toLowerCase()
+      (u) => u.id === currentUserId || (Boolean(u.email && req.user?.email) && u.email.toLowerCase() === req.user.email.toLowerCase())
     );
 
     if (targetUserIndex === -1) {
@@ -2299,8 +2303,9 @@ async function startServer() {
 
   // GET /api/user/saved-coupons: Retrieve current user's saved wishlist coupons
   app.get('/api/user/saved-coupons', requireAuth, (req: Request, res: Response) => {
+    const userEmail = req.user?.email ? req.user.email.toLowerCase() : '';
     const mySaved = savedCoupons.filter(
-      (s) => s.userId === req.user!.id || s.userEmail.toLowerCase() === req.user!.email.toLowerCase()
+      (s) => s.userId === req.user!.id || (Boolean(userEmail && s.userEmail) && s.userEmail.toLowerCase() === userEmail)
     );
     return res.json({
       count: mySaved.length,
@@ -2315,9 +2320,10 @@ async function startServer() {
       return res.status(400).json({ error: 'Coupon ID and Brand are required.' });
     }
 
+    const userEmail = req.user?.email ? req.user.email.toLowerCase() : '';
     const existing = savedCoupons.find(
       (s) =>
-        (s.userId === req.user!.id || s.userEmail.toLowerCase() === req.user!.email.toLowerCase()) &&
+        (s.userId === req.user!.id || (Boolean(userEmail && s.userEmail) && s.userEmail.toLowerCase() === userEmail)) &&
         (s.couponId === couponId || (s.code && code && s.code.toUpperCase() === code.toUpperCase()))
     );
 
@@ -2367,9 +2373,10 @@ async function startServer() {
   // DELETE /api/user/saved-coupons/:couponId: Remove from saved
   app.delete(['/api/user/saved-coupons/:couponId', '/api/saved-coupons/:couponId'], requireAuth, async (req: Request, res: Response) => {
     const { couponId } = req.params;
+    const userEmail = req.user?.email ? req.user.email.toLowerCase() : '';
     const index = savedCoupons.findIndex(
       (s) =>
-        (s.userId === req.user!.id || s.userEmail.toLowerCase() === req.user!.email.toLowerCase()) &&
+        (s.userId === req.user!.id || (Boolean(userEmail && s.userEmail) && s.userEmail.toLowerCase() === userEmail)) &&
         (s.couponId === couponId || s.id === couponId)
     );
 
