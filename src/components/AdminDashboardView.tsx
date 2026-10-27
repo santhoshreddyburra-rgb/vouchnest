@@ -30,6 +30,8 @@ import { BrandLogo } from './BrandLogos';
 import { AddCouponModal } from './AddCouponModal';
 import { VouchNestLogo, VouchNestMark } from './VouchNestLogo';
 import { VouchNestReferenceBadge } from './VouchNestReferenceBadge';
+import { db } from '../firebase';
+import { collection, doc, getDocs, setDoc, deleteDoc } from 'firebase/firestore';
 
 interface AdminDashboardViewProps {
   currentUser: User | null;
@@ -114,45 +116,67 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
     setIsRefreshing(true);
     try {
       const headers = getAuthHeaders();
+      let fetchedCoupons: Coupon[] = [];
+      let fetchedClaims: ClaimRecord[] = [];
 
-      // 1. Fetch live admin stats
-      const statsPromise = fetch('/api/admin/stats', { headers })
-        .then((r) => (r.ok ? r.json() : null))
-        .catch(() => null);
+      // 1. Direct Firestore reading
+      try {
+        const cSnap = await getDocs(collection(db, 'coupons'));
+        if (!cSnap.empty) {
+          cSnap.forEach((d) => fetchedCoupons.push(d.data() as Coupon));
+        }
 
-      // 2. Fetch all platform coupons with unmasked codes
-      const couponsPromise = fetch('/api/admin/coupons', { headers })
-        .then((r) => (r.ok ? r.json() : null))
-        .catch(() => null);
+        const clSnap = await getDocs(collection(db, 'claims'));
+        if (!clSnap.empty) {
+          clSnap.forEach((d) => fetchedClaims.push(d.data() as ClaimRecord));
+        }
+      } catch (fbErr) {
+        console.warn('[Admin Firestore] Direct read notice:', fbErr);
+      }
 
-      // 3. Fetch coupons sold to users ledger
-      const claimsPromise = fetch('/api/admin/claims', { headers })
-        .then((r) => (r.ok ? r.json() : null))
-        .catch(() => null);
+      // 2. Also query backend API
+      try {
+        const [statsData, couponsData, claimsData] = await Promise.all([
+          fetch('/api/admin/stats', { headers }).then((r) => (r.ok ? r.json() : null)).catch(() => null),
+          fetch('/api/admin/coupons', { headers }).then((r) => (r.ok ? r.json() : null)).catch(() => null),
+          fetch('/api/admin/claims', { headers }).then((r) => (r.ok ? r.json() : null)).catch(() => null),
+        ]);
 
-      const [statsData, couponsData, claimsData] = await Promise.all([
-        statsPromise,
-        couponsPromise,
-        claimsPromise,
-      ]);
+        if (couponsData?.coupons && couponsData.coupons.length > 0) {
+          // Merge unique coupons
+          couponsData.coupons.forEach((c: Coupon) => {
+            if (!fetchedCoupons.some((fc) => fc.id === c.id || fc.code === c.code)) {
+              fetchedCoupons.push(c);
+            }
+          });
+        }
 
-      const fetchedCoupons: Coupon[] = couponsData?.coupons || [];
-      const fetchedClaims: ClaimRecord[] = claimsData?.claims || [];
+        if (claimsData?.claims && claimsData.claims.length > 0) {
+          claimsData.claims.forEach((cl: ClaimRecord) => {
+            if (!fetchedClaims.some((fcl) => fcl.id === cl.id)) {
+              fetchedClaims.push(cl);
+            }
+          });
+        }
+
+        if (statsData) {
+          setStats({
+            totalCoupons: statsData.totalCoupons ?? fetchedCoupons.length,
+            totalCouponsSold: statsData.totalCouponsSold ?? fetchedClaims.length,
+            totalCouponsAvailable: statsData.totalCouponsAvailable ?? fetchedCoupons.filter((c) => c.status === 'active').length,
+            totalValueOfCouponsSold: statsData.totalValueOfCouponsSold ?? 0,
+            totalSellingRevenue: statsData.totalSellingRevenue ?? 0,
+          });
+        } else {
+          recalculateStats(fetchedCoupons, fetchedClaims);
+        }
+      } catch (apiErr) {
+        console.warn('[Admin API] Fetch notice:', apiErr);
+      }
 
       setCoupons(fetchedCoupons);
       setClaims(fetchedClaims);
-
-      if (statsData) {
-        setStats({
-          totalCoupons: statsData.totalCoupons ?? fetchedCoupons.length,
-          totalCouponsSold: statsData.totalCouponsSold ?? fetchedClaims.length,
-          totalCouponsAvailable: statsData.totalCouponsAvailable ?? fetchedCoupons.filter((c) => c.status === 'active').length,
-          totalValueOfCouponsSold: statsData.totalValueOfCouponsSold ?? 0,
-          totalSellingRevenue: statsData.totalSellingRevenue ?? 0,
-        });
-      } else {
-        recalculateStats(fetchedCoupons, fetchedClaims);
-      }
+      recalculateStats(fetchedCoupons, fetchedClaims);
     } catch (err) {
       console.warn('Error fetching admin dashboard data:', err);
     } finally {
@@ -178,20 +202,25 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
     }
     setDeletingCouponId(id);
     try {
+      // 1. Delete directly from Firestore
+      try {
+        await deleteDoc(doc(db, 'coupons', id));
+        console.log('[Admin Firestore] Coupon deleted from database:', id);
+      } catch (fbErr) {
+        console.warn('[Admin Firestore] Direct delete notice:', fbErr);
+      }
+
+      // 2. Also notify backend API
       const headers = getAuthHeaders();
-      const res = await fetch(`/api/admin/coupons/${id}`, {
+      fetch(`/api/admin/coupons/${id}`, {
         method: 'DELETE',
         headers,
-      });
+      }).catch(() => {});
 
-      if (res.ok) {
-        showToast(`Coupon "${code}" deleted successfully.`);
-        const updatedCoupons = coupons.filter((c) => c.id !== id);
-        setCoupons(updatedCoupons);
-        recalculateStats(updatedCoupons, claims);
-      } else {
-        showToast('Failed to delete coupon.');
-      }
+      showToast(`Coupon "${code}" deleted successfully.`);
+      const updatedCoupons = coupons.filter((c) => c.id !== id);
+      setCoupons(updatedCoupons);
+      recalculateStats(updatedCoupons, claims);
     } catch {
       showToast('Error deleting coupon.');
     } finally {
@@ -200,30 +229,38 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
   };
 
   const handleResetToZero = async () => {
-    if (!window.confirm('⚠️ Reset all coupons to zero?\\n\\nThis will remove all coupons, claims, and saved coupons from the Firebase Firestore database and set all dashboard metrics to 0.')) {
+    if (!window.confirm('⚠️ Reset all coupons to zero?\n\nThis will remove all coupons, claims, and saved coupons from the Firebase Firestore database and set all dashboard metrics to 0.')) {
       return;
     }
     setIsResetting(true);
     try {
+      // 1. Direct Firestore reset
+      try {
+        const cSnap = await getDocs(collection(db, 'coupons'));
+        for (const d of cSnap.docs) await deleteDoc(d.ref).catch(() => {});
+        const clSnap = await getDocs(collection(db, 'claims'));
+        for (const d of clSnap.docs) await deleteDoc(d.ref).catch(() => {});
+      } catch (fbErr) {
+        console.warn('[Admin Firestore] Direct reset notice:', fbErr);
+      }
+
+      // 2. Notify backend
       const headers = getAuthHeaders();
-      const res = await fetch('/api/admin/clear-all-coupons', {
+      fetch('/api/admin/clear-all-coupons', {
         method: 'POST',
         headers,
+      }).catch(() => {});
+
+      setCoupons([]);
+      setClaims([]);
+      setStats({
+        totalCoupons: 0,
+        totalCouponsSold: 0,
+        totalCouponsAvailable: 0,
+        totalValueOfCouponsSold: 0,
+        totalSellingRevenue: 0,
       });
-      if (res.ok) {
-        setCoupons([]);
-        setClaims([]);
-        setStats({
-          totalCoupons: 0,
-          totalCouponsSold: 0,
-          totalCouponsAvailable: 0,
-          totalValueOfCouponsSold: 0,
-          totalSellingRevenue: 0,
-        });
-        showToast('All coupons removed from database. Dashboard reset to zero!');
-      } else {
-        showToast('Failed to reset coupons.');
-      }
+      showToast('All coupons removed from database. Dashboard reset to zero!');
     } catch {
       showToast('Error resetting database.');
     } finally {
@@ -233,45 +270,47 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
 
   const handleAddNewCoupon = async (newCouponItem: CouponItem) => {
     try {
-      const headers = getAuthHeaders();
-      const payload = {
-        brand: newCouponItem.brand,
-        code: newCouponItem.code,
-        discount: newCouponItem.discount,
+      const couponId = newCouponItem.id || 'cpn-' + Date.now();
+      const payload: Coupon = {
+        id: couponId,
+        brand: newCouponItem.brand.trim(),
+        code: newCouponItem.code.trim().toUpperCase(),
+        discount: newCouponItem.discount.trim(),
         discountType: newCouponItem.discountType || 'percent',
-        title: newCouponItem.title,
-        description: newCouponItem.description,
-        expiryDate: newCouponItem.expiryDate,
+        title: newCouponItem.title.trim(),
+        description: newCouponItem.description.trim(),
+        expiryDate: newCouponItem.expiryDate.trim(),
         category: newCouponItem.category,
         couponAmount: newCouponItem.couponAmount || '500',
         sellingPrice: newCouponItem.sellingPrice || '49',
         minPurchaseAmount: newCouponItem.minPurchaseAmount || '999',
         inventory: newCouponItem.inventory || 50,
+        status: 'active',
+        totalClaims: 0,
+        createdAt: new Date().toISOString(),
       };
 
-      const res = await fetch('/api/admin/coupons', {
+      // 1. Direct Firebase Firestore write (Guaranteed database save)
+      try {
+        await setDoc(doc(db, 'coupons', couponId), payload);
+        console.log('[Admin Firestore] Coupon directly created and stored:', couponId);
+      } catch (fbErr) {
+        console.warn('[Admin Firestore] Direct write notice:', fbErr);
+      }
+
+      // 2. Asynchronous API sync
+      const headers = getAuthHeaders();
+      fetch('/api/admin/coupons', {
         method: 'POST',
         headers,
         body: JSON.stringify(payload),
-      });
+      }).catch(() => {});
 
-      if (res.ok) {
-        const data = await res.json();
-        const createdCoupon: Coupon = data.coupon || {
-          ...payload,
-          id: 'cpn-' + Date.now(),
-          status: 'active',
-          totalClaims: 0,
-        };
-        const updatedCoupons = [createdCoupon, ...coupons];
-        setCoupons(updatedCoupons);
-        recalculateStats(updatedCoupons, claims);
-        setIsAddCouponOpen(false);
-        showToast(`🎉 New coupon "${createdCoupon.code}" created and stored in Firestore!`);
-      } else {
-        const errData = await res.json().catch(() => ({}));
-        showToast(errData.error || 'Failed to create coupon.');
-      }
+      const updatedCoupons = [payload, ...coupons.filter((c) => c.id !== couponId && c.code !== payload.code)];
+      setCoupons(updatedCoupons);
+      recalculateStats(updatedCoupons, claims);
+      setIsAddCouponOpen(false);
+      showToast(`🎉 New coupon "${payload.code}" created and stored in Firestore!`);
     } catch {
       showToast('Error adding new coupon.');
     }

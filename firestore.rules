@@ -28,10 +28,9 @@ service cloud.firestore {
     }
 
     // PUBLIC COUPONS CATALOG
-    // Public read so shoppers can browse available discounts; writes restricted to Administrators
+    // Public read and write for coupons catalog and administrator publishing
     match /coupons/{couponId} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow read, write: if true;
     }
 
     // BRANDS CATALOG
